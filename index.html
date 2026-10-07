@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Quiz Club</title><style>
+:root { --ink:#2b2440; --muted:#6d6484; --card:#fff; --line:#f0d7e6; }
+* { box-sizing:border-box; }
+body {
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",Nunito,sans-serif;
+  background:
+    radial-gradient(500px 220px at 8% 0%, #ffe0f0 0%, transparent 60%),
+    radial-gradient(480px 240px at 100% 8%, #e4f4ff 0%, transparent 55%),
+    radial-gradient(400px 200px at 50% 100%, #fff4d6 0%, transparent 50%),
+    #fff8fb;
+}
+.wrap { max-width:880px; margin:0 auto; padding:22px 16px 48px; }
+.mascots { display:flex; justify-content:center; gap:18px; margin-bottom:8px; }
+.pet { width:72px; height:84px; position:relative; }
+.pig-head, .bun-head { width:54px; height:46px; border:3px solid #2b2440; border-radius:46% 46% 42% 42%; margin:18px auto 0; position:relative; background:#ffe1c4; }
+.pig-ear { position:absolute; top:-10px; width:16px; height:16px; background:#ffb7d5; border:3px solid #2b2440; border-radius:50%; }
+.pig-ear.l { left:4px; } .pig-ear.r { right:4px; }
+.snout { width:18px; height:12px; background:#ff8fab; border:2px solid #2b2440; border-radius:8px; margin:16px auto 0; }
+.bun-head { background:#fff; border-radius:40%; }
+.ear { position:absolute; top:-28px; width:14px; height:32px; background:#fff; border:3px solid #2b2440; border-radius:12px 12px 8px 8px; }
+.ear.l { left:8px; } .ear.r { right:8px; }
+.ear i { display:block; width:6px; height:16px; background:#ff8fab; border-radius:6px; margin:8px auto 0; }
+.eye { position:absolute; top:14px; width:5px; height:6px; background:#2b2440; border-radius:50%; }
+.eye.l { left:14px; } .eye.r { right:14px; }
+h1 { font-family:Georgia,"Palatino Linotype",serif; text-align:center; margin:6px 0 4px; font-size:34px; }
+.lead { text-align:center; color:var(--muted); margin:0 0 18px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+a.card {
+  display:block; text-decoration:none; color:inherit; background:#fff;
+  border:3px solid #2b2440; border-radius:22px; padding:16px; box-shadow:4px 4px 0 #2b2440;
+}
+a.card:hover { transform:translate(-2px,-2px); }
+a.card .em { font-size:28px; }
+a.card strong { display:block; margin:6px 0 2px; font-size:18px; }
+a.card span { color:var(--muted); font-size:14px; }
+.panel { background:#fff; border:3px solid #2b2440; border-radius:24px; padding:18px; box-shadow:5px 5px 0 #2b2440; }
+.toprow { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+.back { color:#2b2440; font-weight:700; text-decoration:none; background:#fff3b0; border:2px solid #2b2440; border-radius:999px; padding:6px 12px; }
+.stars { letter-spacing:2px; font-size:20px; }
+.bar { height:12px; background:#f6e7f0; border:2px solid #2b2440; border-radius:99px; overflow:hidden; margin:12px 0 14px; }
+.bar > div { height:100%; width:0; background:linear-gradient(90deg,#ff8fab,#ffd166); }
+.prompt { font-size:24px; line-height:1.35; margin:4px 0 6px; white-space:pre-wrap; }
+.hint { color:var(--muted); margin:0 0 14px; }
+.choices { display:grid; gap:10px; }
+button.choice, button.go, button.ghost { font:inherit; cursor:pointer; }
+button.choice {
+  text-align:left; background:#fff; border:3px solid #2b2440; border-radius:16px;
+  padding:12px 14px; font-size:17px; box-shadow:3px 3px 0 #2b2440;
+}
+button.choice:hover:not(:disabled) { background:#fff7fb; }
+button.choice.good { background:#d9f8e4; }
+button.choice.bad { background:#ffd9d6; }
+button.choice:disabled { cursor:default; }
+.feedback { min-height:46px; margin-top:12px; padding:10px 12px; border-radius:14px; display:none; border:2px solid #2b2440; }
+.feedback.show { display:block; }
+.feedback.ok { background:#d9f8e4; }
+.feedback.no { background:#fff1cc; }
+.actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+button.go, a.go {
+  background:#ff8fab; color:#2b2440; border:3px solid #2b2440; border-radius:14px;
+  padding:10px 16px; font-weight:700; text-decoration:none; display:inline-block;
+}
+button.ghost { background:#fff; border:3px solid #2b2440; border-radius:14px; padding:10px 14px; }
+.scorebig { font-family:Georgia,serif; font-size:52px; margin:6px 0; text-align:center; }
+.center { text-align:center; }
+ul.miss { margin:8px 0 0; padding-left:18px; }
+.modes { display:flex; gap:8px; flex-wrap:wrap; }
+.modes button { border:2px solid #2b2440; background:#fff; border-radius:999px; padding:6px 12px; cursor:pointer; font:inherit; }
+.modes button.on { background:#fff3b0; }
+footer.note { margin-top:16px; color:var(--muted); font-size:13px; text-align:center; }
+.hidden { display:none !important; }
+
+.nav { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+</style></head><body><div class="wrap">
+<div id="home">
+<div class="mascots" aria-hidden="true">
+  <div class="pet"><div class="pig-head"><i class="pig-ear l"></i><i class="pig-ear r"></i><i class="eye l"></i><i class="eye r"></i><div class="snout"></div></div></div>
+  <div class="pet"><div class="bun-head"><i class="ear l"><i></i></i><i class="ear r"><i></i></i><i class="eye l"></i><i class="eye r"></i></div></div>
+</div>
+<h1>English Quiz Club</h1>
+<p class="lead">Pick one game. Each card is its own quiz, with 10 questions and stars.</p>
+<div class="grid"><a class="card" href="#verbs" style="background:#ffe3ee"><div class="em">✏️</div><strong>Verb Forms</strong><span>Past, he/she/it, and -ing</span></a>
+<a class="card" href="#collectives" style="background:#fff1e0"><div class="em">🦁</div><strong>Collective Nouns</strong><span>A pride of lions</span></a>
+<a class="card" href="#comparatives" style="background:#eeeaff"><div class="em">📏</div><strong>Comparatives</strong><span>bigger, happiest, best</span></a>
+<a class="card" href="#idioms" style="background:#ffe8ee"><div class="em">💭</div><strong>Idioms</strong><span>on cloud nine</span></a>
+<a class="card" href="#phrasals" style="background:#e5f7f4"><div class="em">🚌</div><strong>Phrasal Verbs</strong><span>get on, look after</span></a>
+<a class="card" href="#similes" style="background:#fff6dc"><div class="em">⚡</div><strong>Similes</strong><span>as brave as a lion</span></a>
+<a class="card" href="#show" style="background:#ffeee6"><div class="em">🌟</div><strong>Show, Don’t Tell</strong><span>Show the feeling</span></a>
+<a class="card" href="#affixes" style="background:#e8f0ff"><div class="em">🧩</div><strong>Prefixes & Suffixes</strong><span>un-, re-, -ful, -ly</span></a>
+<a class="card" href="#compounds" style="background:#e7f8f2"><div class="em">🌈</div><strong>Compound Words</strong><span>rain + bow = rainbow</span></a>
+<a class="card" href="#connectors" style="background:#f3e9ff"><div class="em">🔗</div><strong>Connectors</strong><span>because, however, finally</span></a></div>
+<footer class="note">All games are in this one page, so the cards work even if this is the only file.</footer>
+</div>
+<div id="game" class="hidden">
+<div class="nav"><a class="back" href="#home">← All games</a><div class="stars" id="starline">☆☆☆☆☆☆☆☆☆☆</div></div>
+<h1 id="gameTitle">Quiz</h1>
+<p class="lead" id="gameBlurb"></p>
+<section id="play" class="panel">
+  <div class="toprow"><div class="modes" id="modes"></div><div id="qcount"></div></div>
+  <div class="bar"><div id="prog"></div></div>
+  <div class="prompt" id="prompt"></div>
+  <p class="hint" id="hint"></p>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="fb"></div>
+  <div class="actions"><button class="go" id="nextBtn" disabled>Next</button></div>
+</section>
+<section id="done" class="panel hidden">
+  <div class="center"><div class="stars" id="starend"></div><div class="scorebig" id="scorebig"></div><p id="scoreline"></p></div>
+  <div id="missed"></div>
+  <div class="actions"><button class="go" id="againBtn">Play again</button><a class="go" href="#home">All games</a></div>
+</section>
+</div>
+</div>
+<script>
+const DATA = {"verbs": [{"base": "add", "past": "added", "third": "adds", "ing": "adding"}, {"base": "ask", "past": "asked", "third": "asks", "ing": "asking"}, {"base": "bake", "past": "baked", "third": "bakes", "ing": "baking"}, {"base": "call", "past": "called", "third": "calls", "ing": "calling"}, {"base": "catch", "past": "caught", "third": "catches", "ing": "catching"}, {"base": "clean", "past": "cleaned", "third": "cleans", "ing": "cleaning"}, {"base": "climb", "past": "climbed", "third": "climbs", "ing": "climbing"}, {"base": "close", "past": "closed", "third": "closes", "ing": "closing"}, {"base": "cook", "past": "cooked", "third": "cooks", "ing": "cooking"}, {"base": "count", "past": "counted", "third": "counts", "ing": "counting"}, {"base": "cry", "past": "cried", "third": "cries", "ing": "crying"}, {"base": "dance", "past": "danced", "third": "dances", "ing": "dancing"}, {"base": "draw", "past": "drew", "third": "draws", "ing": "drawing"}, {"base": "drink", "past": "drank", "third": "drinks", "ing": "drinking"}, {"base": "eat", "past": "ate", "third": "eats", "ing": "eating"}, {"base": "fall", "past": "fell", "third": "falls", "ing": "falling"}, {"base": "find", "past": "found", "third": "finds", "ing": "finding"}, {"base": "fly", "past": "flew", "third": "flies", "ing": "flying"}, {"base": "give", "past": "gave", "third": "gives", "ing": "giving"}, {"base": "go", "past": "went", "third": "goes", "ing": "going"}, {"base": "grow", "past": "grew", "third": "grows", "ing": "growing"}, {"base": "help", "past": "helped", "third": "helps", "ing": "helping"}, {"base": "hide", "past": "hid", "third": "hides", "ing": "hiding"}, {"base": "jump", "past": "jumped", "third": "jumps", "ing": "jumping"}, {"base": "kick", "past": "kicked", "third": "kicks", "ing": "kicking"}, {"base": "laugh", "past": "laughed", "third": "laughs", "ing": "laughing"}, {"base": "learn", "past": "learnt", "third": "learns", "ing": "learning"}, {"base": "like", "past": "liked", "third": "likes", "ing": "liking"}, {"base": "listen", "past": "listened", "third": "listens", "ing": "listening"}, {"base": "look", "past": "looked", "third": "looks", "ing": "looking"}, {"base": "love", "past": "loved", "third": "loves", "ing": "loving"}, {"base": "make", "past": "made", "third": "makes", "ing": "making"}, {"base": "open", "past": "opened", "third": "opens", "ing": "opening"}, {"base": "paint", "past": "painted", "third": "paints", "ing": "painting"}, {"base": "play", "past": "played", "third": "plays", "ing": "playing"}, {"base": "pull", "past": "pulled", "third": "pulls", "ing": "pulling"}, {"base": "push", "past": "pushed", "third": "pushes", "ing": "pushing"}, {"base": "read", "past": "read", "third": "reads", "ing": "reading"}, {"base": "run", "past": "ran", "third": "runs", "ing": "running"}, {"base": "say", "past": "said", "third": "says", "ing": "saying"}, {"base": "see", "past": "saw", "third": "sees", "ing": "seeing"}, {"base": "sing", "past": "sang", "third": "sings", "ing": "singing"}, {"base": "sit", "past": "sat", "third": "sits", "ing": "sitting"}, {"base": "sleep", "past": "slept", "third": "sleeps", "ing": "sleeping"}, {"base": "smile", "past": "smiled", "third": "smiles", "ing": "smiling"}, {"base": "stand", "past": "stood", "third": "stands", "ing": "standing"}, {"base": "stop", "past": "stopped", "third": "stops", "ing": "stopping"}, {"base": "swim", "past": "swam", "third": "swims", "ing": "swimming"}, {"base": "take", "past": "took", "third": "takes", "ing": "taking"}, {"base": "talk", "past": "talked", "third": "talks", "ing": "talking"}, {"base": "tell", "past": "told", "third": "tells", "ing": "telling"}, {"base": "think", "past": "thought", "third": "thinks", "ing": "thinking"}, {"base": "throw", "past": "threw", "third": "throws", "ing": "throwing"}, {"base": "walk", "past": "walked", "third": "walks", "ing": "walking"}, {"base": "want", "past": "wanted", "third": "wants", "ing": "wanting"}, {"base": "watch", "past": "watched", "third": "watches", "ing": "watching"}, {"base": "write", "past": "wrote", "third": "writes", "ing": "writing"}, {"base": "build", "past": "built", "third": "builds", "ing": "building"}, {"base": "buy", "past": "bought", "third": "buys", "ing": "buying"}, {"base": "carry", "past": "carried", "third": "carries", "ing": "carrying"}, {"base": "change", "past": "changed", "third": "changes", "ing": "changing"}, {"base": "choose", "past": "chose", "third": "chooses", "ing": "choosing"}, {"base": "come", "past": "came", "third": "comes", "ing": "coming"}, {"base": "cut", "past": "cut", "third": "cuts", "ing": "cutting"}, {"base": "do", "past": "did", "third": "does", "ing": "doing"}, {"base": "drive", "past": "drove", "third": "drives", "ing": "driving"}, {"base": "feel", "past": "felt", "third": "feels", "ing": "feeling"}, {"base": "fight", "past": "fought", "third": "fights", "ing": "fighting"}, {"base": "get", "past": "got", "third": "gets", "ing": "getting"}, {"base": "hold", "past": "held", "third": "holds", "ing": "holding"}, {"base": "keep", "past": "kept", "third": "keeps", "ing": "keeping"}, {"base": "know", "past": "knew", "third": "knows", "ing": "knowing"}, {"base": "leave", "past": "left", "third": "leaves", "ing": "leaving"}, {"base": "lose", "past": "lost", "third": "loses", "ing": "losing"}, {"base": "meet", "past": "met", "third": "meets", "ing": "meeting"}, {"base": "pay", "past": "paid", "third": "pays", "ing": "paying"}, {"base": "put", "past": "put", "third": "puts", "ing": "putting"}, {"base": "ride", "past": "rode", "third": "rides", "ing": "riding"}, {"base": "ring", "past": "rang", "third": "rings", "ing": "ringing"}, {"base": "rise", "past": "rose", "third": "rises", "ing": "rising"}, {"base": "send", "past": "sent", "third": "sends", "ing": "sending"}, {"base": "show", "past": "showed", "third": "shows", "ing": "showing"}, {"base": "shut", "past": "shut", "third": "shuts", "ing": "shutting"}, {"base": "speak", "past": "spoke", "third": "speaks", "ing": "speaking"}, {"base": "spend", "past": "spent", "third": "spends", "ing": "spending"}, {"base": "start", "past": "started", "third": "starts", "ing": "starting"}, {"base": "stick", "past": "stuck", "third": "sticks", "ing": "sticking"}, {"base": "sweep", "past": "swept", "third": "sweeps", "ing": "sweeping"}, {"base": "teach", "past": "taught", "third": "teaches", "ing": "teaching"}, {"base": "tear", "past": "tore", "third": "tears", "ing": "tearing"}, {"base": "try", "past": "tried", "third": "tries", "ing": "trying"}, {"base": "turn", "past": "turned", "third": "turns", "ing": "turning"}, {"base": "wait", "past": "waited", "third": "waits", "ing": "waiting"}, {"base": "wake", "past": "woke", "third": "wakes", "ing": "waking"}, {"base": "wear", "past": "wore", "third": "wears", "ing": "wearing"}, {"base": "win", "past": "won", "third": "wins", "ing": "winning"}, {"base": "work", "past": "worked", "third": "works", "ing": "working"}, {"base": "bring", "past": "brought", "third": "brings", "ing": "bringing"}, {"base": "forget", "past": "forgot", "third": "forgets", "ing": "forgetting"}, {"base": "freeze", "past": "froze", "third": "freezes", "ing": "freezing"}], "collectives": [{"word": "pride", "of": "lions"}, {"word": "herd", "of": "elephants"}, {"word": "herd", "of": "cows"}, {"word": "flock", "of": "birds"}, {"word": "flock", "of": "sheep"}, {"word": "pack", "of": "wolves"}, {"word": "school", "of": "fish"}, {"word": "swarm", "of": "bees"}, {"word": "colony", "of": "ants"}, {"word": "troop", "of": "monkeys"}, {"word": "gaggle", "of": "geese"}, {"word": "pod", "of": "dolphins"}, {"word": "litter", "of": "puppies"}, {"word": "brood", "of": "chicks"}, {"word": "murder", "of": "crows"}, {"word": "parliament", "of": "owls"}, {"word": "crash", "of": "rhinoceroses"}, {"word": "dazzle", "of": "zebras"}, {"word": "leap", "of": "leopards"}, {"word": "clowder", "of": "cats"}, {"word": "tower", "of": "giraffes"}, {"word": "flamboyance", "of": "flamingos"}, {"word": "waddle", "of": "penguins"}, {"word": "hive", "of": "bees"}, {"word": "caravan", "of": "camels"}, {"word": "drove", "of": "cattle"}, {"word": "string", "of": "horses"}, {"word": "team", "of": "oxen"}, {"word": "cloud", "of": "bats"}, {"word": "flight", "of": "birds"}, {"word": "bask", "of": "crocodiles"}, {"word": "sloth", "of": "bears"}, {"word": "sounder", "of": "wild pigs"}, {"word": "romp", "of": "otters"}, {"word": "coalition", "of": "cheetahs"}, {"word": "business", "of": "ferrets"}, {"word": "bloat", "of": "hippopotamuses"}, {"word": "congregation", "of": "alligators"}, {"word": "shoal", "of": "fish"}, {"word": "host", "of": "sparrows"}, {"word": "nest", "of": "mice"}, {"word": "skulk", "of": "foxes"}, {"word": "warren", "of": "rabbits"}, {"word": "ambush", "of": "tigers"}, {"word": "journey", "of": "giraffes"}, {"word": "memory", "of": "elephants"}, {"word": "barrel", "of": "monkeys"}, {"word": "cackle", "of": "hyenas"}, {"word": "prickle", "of": "porcupines"}, {"word": "sleuth", "of": "bears"}, {"word": "team", "of": "players"}, {"word": "class", "of": "students"}, {"word": "choir", "of": "singers"}, {"word": "band", "of": "musicians"}, {"word": "crew", "of": "sailors"}, {"word": "crowd", "of": "people"}, {"word": "army", "of": "soldiers"}, {"word": "staff", "of": "teachers"}, {"word": "committee", "of": "members"}, {"word": "audience", "of": "spectators"}, {"word": "cast", "of": "actors"}, {"word": "troupe", "of": "dancers"}, {"word": "panel", "of": "judges"}, {"word": "squad", "of": "athletes"}, {"word": "family", "of": "four"}, {"word": "bunch", "of": "bananas"}, {"word": "bouquet", "of": "flowers"}, {"word": "stack", "of": "books"}, {"word": "pile", "of": "clothes"}, {"word": "set", "of": "tools"}, {"word": "fleet", "of": "ships"}, {"word": "library", "of": "books"}, {"word": "pack", "of": "cards"}, {"word": "deck", "of": "cards"}, {"word": "forest", "of": "trees"}, {"word": "range", "of": "mountains"}, {"word": "cluster", "of": "stars"}, {"word": "bundle", "of": "sticks"}, {"word": "heap", "of": "clothes"}, {"word": "row", "of": "chairs"}, {"word": "collection", "of": "stamps"}, {"word": "batch", "of": "cookies"}, {"word": "carton", "of": "eggs"}, {"word": "loaf", "of": "bread"}, {"word": "string", "of": "beads"}, {"word": "flight", "of": "stairs"}, {"word": "bed", "of": "flowers"}, {"word": "rainbow", "of": "colours"}, {"word": "mountain", "of": "toys"}], "comparatives": [{"pos": "fast", "comp": "faster", "sup": "fastest"}, {"pos": "slow", "comp": "slower", "sup": "slowest"}, {"pos": "small", "comp": "smaller", "sup": "smallest"}, {"pos": "tall", "comp": "taller", "sup": "tallest"}, {"pos": "short", "comp": "shorter", "sup": "shortest"}, {"pos": "high", "comp": "higher", "sup": "highest"}, {"pos": "long", "comp": "longer", "sup": "longest"}, {"pos": "old", "comp": "older", "sup": "oldest"}, {"pos": "young", "comp": "younger", "sup": "youngest"}, {"pos": "cheap", "comp": "cheaper", "sup": "cheapest"}, {"pos": "kind", "comp": "kinder", "sup": "kindest"}, {"pos": "strong", "comp": "stronger", "sup": "strongest"}, {"pos": "happy", "comp": "happier", "sup": "happiest"}, {"pos": "heavy", "comp": "heavier", "sup": "heaviest"}, {"pos": "easy", "comp": "easier", "sup": "easiest"}, {"pos": "sunny", "comp": "sunnier", "sup": "sunniest"}, {"pos": "funny", "comp": "funnier", "sup": "funniest"}, {"pos": "busy", "comp": "busier", "sup": "busiest"}, {"pos": "dirty", "comp": "dirtier", "sup": "dirtiest"}, {"pos": "early", "comp": "earlier", "sup": "earliest"}, {"pos": "hungry", "comp": "hungrier", "sup": "hungriest"}, {"pos": "lazy", "comp": "lazier", "sup": "laziest"}, {"pos": "pretty", "comp": "prettier", "sup": "prettiest"}, {"pos": "big", "comp": "bigger", "sup": "biggest"}, {"pos": "sad", "comp": "sadder", "sup": "saddest"}, {"pos": "hot", "comp": "hotter", "sup": "hottest"}, {"pos": "fat", "comp": "fatter", "sup": "fattest"}, {"pos": "thin", "comp": "thinner", "sup": "thinnest"}, {"pos": "wet", "comp": "wetter", "sup": "wettest"}, {"pos": "large", "comp": "larger", "sup": "largest"}, {"pos": "nice", "comp": "nicer", "sup": "nicest"}, {"pos": "late", "comp": "later", "sup": "latest"}, {"pos": "brave", "comp": "braver", "sup": "bravest"}, {"pos": "safe", "comp": "safer", "sup": "safest"}, {"pos": "wide", "comp": "wider", "sup": "widest"}, {"pos": "cute", "comp": "cuter", "sup": "cutest"}, {"pos": "beautiful", "comp": "more beautiful", "sup": "most beautiful"}, {"pos": "expensive", "comp": "more expensive", "sup": "most expensive"}, {"pos": "difficult", "comp": "more difficult", "sup": "most difficult"}, {"pos": "careful", "comp": "more careful", "sup": "most careful"}, {"pos": "famous", "comp": "more famous", "sup": "most famous"}, {"pos": "helpful", "comp": "more helpful", "sup": "most helpful"}, {"pos": "important", "comp": "more important", "sup": "most important"}, {"pos": "dangerous", "comp": "more dangerous", "sup": "most dangerous"}, {"pos": "good", "comp": "better", "sup": "best"}, {"pos": "bad", "comp": "worse", "sup": "worst"}, {"pos": "far", "comp": "farther", "sup": "farthest"}, {"pos": "little", "comp": "less", "sup": "least"}, {"pos": "many", "comp": "more", "sup": "most"}, {"pos": "much", "comp": "more", "sup": "most"}], "idioms": [{"item": "butterflies in my stomach", "mean": "feeling nervous or excited"}, {"item": "on cloud nine", "mean": "extremely happy"}, {"item": "under the weather", "mean": "feeling sick or unwell"}, {"item": "cold feet", "mean": "suddenly feeling scared to do something"}, {"item": "over the moon", "mean": "very happy and excited"}, {"item": "heart sank", "mean": "felt very disappointed or sad"}, {"item": "walking on air", "mean": "feeling extremely happy"}, {"item": "green with envy", "mean": "very jealous"}, {"item": "jump out of my skin", "mean": "very shocked or surprised"}, {"item": "grin from ear to ear", "mean": "smile widely because of happiness"}, {"item": "down in the dumps", "mean": "feeling sad"}, {"item": "burst into tears", "mean": "suddenly start crying"}, {"item": "keep a straight face", "mean": "try not to smile or laugh"}, {"item": "blood ran cold", "mean": "felt very scared"}, {"item": "eyes lit up", "mean": "showed excitement or happiness"}, {"item": "a lump in my throat", "mean": "feel like crying"}, {"item": "scared out of my wits", "mean": "extremely frightened"}, {"item": "feeling blue", "mean": "feeling sad"}, {"item": "on top of the world", "mean": "feeling extremely happy and successful"}, {"item": "heart was pounding", "mean": "feeling very nervous or excited"}, {"item": "a piece of cake", "mean": "very easy"}, {"item": "spill the beans", "mean": "tell a secret"}, {"item": "hit the books", "mean": "study hard"}, {"item": "pull someone's leg", "mean": "joke or tease someone"}, {"item": "lend a hand", "mean": "help someone"}, {"item": "keep an eye on", "mean": "watch carefully"}, {"item": "make up your mind", "mean": "decide"}, {"item": "put your foot down", "mean": "be firm and refuse"}, {"item": "bite the bullet", "mean": "face a difficult situation bravely"}, {"item": "break the ice", "mean": "start a conversation to make people comfortable"}, {"item": "hit the nail on the head", "mean": "say exactly the right thing"}, {"item": "put on your thinking cap", "mean": "think carefully"}, {"item": "shake a leg", "mean": "hurry up"}, {"item": "keep your chin up", "mean": "stay positive and cheerful"}, {"item": "bookworm", "mean": "someone who loves reading"}, {"item": "early bird", "mean": "someone who wakes up early"}, {"item": "couch potato", "mean": "a lazy person who watches a lot of TV"}, {"item": "copycat", "mean": "someone who copies others"}, {"item": "busy bee", "mean": "a very active and hardworking person"}, {"item": "two peas in a pod", "mean": "very similar in character"}, {"item": "apple of my eye", "mean": "someone very loved and special"}, {"item": "pain in the neck", "mean": "someone or something annoying"}, {"item": "heart of gold", "mean": "very kind and generous"}, {"item": "hit the hay", "mean": "go to bed"}, {"item": "once in a blue moon", "mean": "very rarely"}, {"item": "in the blink of an eye", "mean": "very quickly"}, {"item": "better late than never", "mean": "better to do something late than not at all"}, {"item": "raining cats and dogs", "mean": "raining very heavily"}, {"item": "every cloud has a silver lining", "mean": "something good comes from something bad"}, {"item": "as cool as a cucumber", "mean": "very calm and relaxed"}, {"item": "like a bull in a china shop", "mean": "very clumsy and careless"}, {"item": "out of the blue", "mean": "suddenly and unexpectedly"}, {"item": "in a pickle", "mean": "in a difficult situation"}, {"item": "the coast is clear", "mean": "it is safe now"}, {"item": "throw in the towel", "mean": "give up"}, {"item": "cost an arm and a leg", "mean": "very expensive"}, {"item": "break a leg", "mean": "good luck before a performance"}, {"item": "have a blast", "mean": "have a great time"}, {"item": "sleep like a log", "mean": "sleep very deeply"}, {"item": "let the cat out of the bag", "mean": "accidentally reveal a secret"}, {"item": "a fish out of water", "mean": "feel uncomfortable in a new place"}, {"item": "cry over spilled milk", "mean": "worry about something that cannot be changed"}, {"item": "when pigs fly", "mean": "something that will never happen"}, {"item": "hold your horses", "mean": "wait and be patient"}, {"item": "the early bird catches the worm", "mean": "success comes to those who start early"}, {"item": "actions speak louder than words", "mean": "what you do matters more than what you say"}, {"item": "don't judge a book by its cover", "mean": "don't judge by appearance only"}, {"item": "better safe than sorry", "mean": "it is better to be careful"}, {"item": "no pain, no gain", "mean": "you must work hard to achieve something"}, {"item": "practice makes perfect", "mean": "you improve by practising a lot"}], "phrasals": [{"item": "get on", "mean": "to board a vehicle"}, {"item": "get off", "mean": "to leave a vehicle"}, {"item": "get in", "mean": "to enter a car"}, {"item": "get out", "mean": "to leave a car"}, {"item": "set off", "mean": "to start a journey"}, {"item": "move in", "mean": "to start living in a new place"}, {"item": "go back", "mean": "to return to a place"}, {"item": "run away", "mean": "to escape by running"}, {"item": "take off", "mean": "a plane leaves the ground"}, {"item": "check in", "mean": "to register at a hotel or airport"}, {"item": "drop off", "mean": "to take someone somewhere and leave them"}, {"item": "pick up", "mean": "to collect someone from a place"}, {"item": "get up", "mean": "to wake up and leave the bed"}, {"item": "put on", "mean": "to wear something"}, {"item": "take off", "mean": "to remove clothing"}, {"item": "turn on", "mean": "to start a machine or light"}, {"item": "turn off", "mean": "to stop a machine or light"}, {"item": "put away", "mean": "to return something to its place"}, {"item": "clean up", "mean": "to make a place tidy"}, {"item": "throw away", "mean": "to discard something"}, {"item": "look for", "mean": "to search for something"}, {"item": "find out", "mean": "to discover information"}, {"item": "eat out", "mean": "to eat at a restaurant"}, {"item": "hurry up", "mean": "to do something faster"}, {"item": "calm down", "mean": "to become relaxed"}, {"item": "cheer up", "mean": "to become happier"}, {"item": "give up", "mean": "to stop trying"}, {"item": "look forward to", "mean": "to feel excited about something"}, {"item": "get over", "mean": "to recover from something bad"}, {"item": "burst into tears", "mean": "to suddenly start crying"}, {"item": "let down", "mean": "to disappoint someone"}, {"item": "stand up for", "mean": "to defend someone"}, {"item": "get along with", "mean": "to have a good relationship"}, {"item": "make up", "mean": "to become friends again after a fight"}, {"item": "hand in", "mean": "to submit work"}, {"item": "look up", "mean": "to search for information"}, {"item": "write down", "mean": "to note something on paper"}, {"item": "figure out", "mean": "to understand or solve something"}, {"item": "put off", "mean": "to delay doing something"}, {"item": "catch up", "mean": "to reach the same level as others"}, {"item": "sign up", "mean": "to register for something"}, {"item": "come up with", "mean": "to think of an idea"}, {"item": "run out of", "mean": "to have no more of something"}, {"item": "look after", "mean": "to take care of someone"}, {"item": "count on", "mean": "to rely on someone"}, {"item": "come across", "mean": "to find something by chance"}, {"item": "show up", "mean": "to arrive"}, {"item": "cut down on", "mean": "to reduce the amount of something"}, {"item": "make up for", "mean": "to compensate for something"}, {"item": "get away with", "mean": "to do something wrong without being punished"}], "similes": [{"item": "as brave as a lion", "mean": "very brave"}, {"item": "as gentle as a lamb", "mean": "very kind and gentle"}, {"item": "as busy as a bee", "mean": "very active and hardworking"}, {"item": "as wise as an owl", "mean": "very wise"}, {"item": "as strong as an ox", "mean": "very strong"}, {"item": "as quiet as a mouse", "mean": "very quiet"}, {"item": "as cunning as a fox", "mean": "very clever in a tricky way"}, {"item": "as proud as a peacock", "mean": "very proud"}, {"item": "as stubborn as a mule", "mean": "very unwilling to change"}, {"item": "as graceful as a swan", "mean": "very elegant"}, {"item": "as loyal as a dog", "mean": "very faithful"}, {"item": "as light as a feather", "mean": "very light"}, {"item": "as happy as a lark", "mean": "very happy"}, {"item": "as cold as ice", "mean": "very unfriendly or very cold"}, {"item": "as free as a bird", "mean": "feeling free and happy"}, {"item": "as fast as lightning", "mean": "very fast"}, {"item": "as slow as a snail", "mean": "very slow"}, {"item": "as loud as thunder", "mean": "very loud"}, {"item": "as slippery as an eel", "mean": "difficult to hold or catch"}, {"item": "as smooth as silk", "mean": "very smooth"}, {"item": "as clear as crystal", "mean": "very clear"}, {"item": "as white as snow", "mean": "very white"}, {"item": "as hot as fire", "mean": "very hot"}, {"item": "as dry as a bone", "mean": "very dry"}, {"item": "as still as a statue", "mean": "completely still"}, {"item": "as fresh as a daisy", "mean": "looking fresh and energetic"}, {"item": "as quiet as a whisper", "mean": "very soft and quiet"}, {"item": "as clear as a bell", "mean": "a very clear sound"}, {"item": "as big as an elephant", "mean": "very large"}, {"item": "as quick as a wink", "mean": "extremely fast"}], "show": [{"tell": "She was happy.", "show": "She grinned from ear to ear and clapped her hands excitedly.", "feel": "happiness"}, {"tell": "He felt sad.", "show": "His shoulders slumped and he stared at the floor.", "feel": "sadness"}, {"tell": "She was angry.", "show": "She clenched her fists tightly and her face turned red.", "feel": "anger"}, {"tell": "She was scared.", "show": "Her hands trembled and she took a step backwards.", "feel": "fear"}, {"tell": "He was excited.", "show": "He could not sit still and kept asking, “When are we going?”", "feel": "excitement"}, {"tell": "She was kind.", "show": "She helped the old lady carry her heavy bags.", "feel": "kindness"}, {"tell": "He was tired.", "show": "He dragged his feet and yawned loudly.", "feel": "tiredness"}, {"tell": "She was surprised.", "show": "Her eyes widened and her mouth opened in shock.", "feel": "surprise"}, {"tell": "He was furious.", "show": "He slammed his book on the table and glared at his brother.", "feel": "anger"}, {"tell": "She was nervous.", "show": "She kept looking at the clock and tapping her fingers on the desk.", "feel": "fear"}, {"tell": "He was proud.", "show": "He stood taller and puffed out his chest with a big smile.", "feel": "happiness"}, {"tell": "She was heartbroken.", "show": "She held the torn photo and blinked back her tears.", "feel": "sadness"}, {"tell": "He was exhausted.", "show": "He collapsed onto the sofa and closed his eyes immediately.", "feel": "tiredness"}, {"tell": "She was thrilled.", "show": "She bounced on her toes and could not stop smiling.", "feel": "excitement"}, {"tell": "He was thoughtful.", "show": "He remembered his friend’s favourite drink and bought it for her.", "feel": "kindness"}, {"tell": "She was stunned.", "show": "She stood frozen and could not say a word.", "feel": "surprise"}], "prefixes": [{"affix": "un-", "mean": "not / opposite of", "ex": "unhappy"}, {"affix": "re-", "mean": "again", "ex": "rewrite"}, {"affix": "dis-", "mean": "not / opposite of", "ex": "dislike"}, {"affix": "pre-", "mean": "before", "ex": "preview"}, {"affix": "mis-", "mean": "wrongly", "ex": "misunderstand"}, {"affix": "over-", "mean": "too much", "ex": "overeat"}, {"affix": "under-", "mean": "too little", "ex": "undercook"}, {"affix": "bi-", "mean": "two", "ex": "bicycle"}, {"affix": "tri-", "mean": "three", "ex": "triangle"}, {"affix": "sub-", "mean": "under", "ex": "submarine"}, {"affix": "inter-", "mean": "between", "ex": "international"}, {"affix": "co-", "mean": "together", "ex": "cooperate"}, {"affix": "tele-", "mean": "far", "ex": "telephone"}, {"affix": "auto-", "mean": "self", "ex": "autograph"}, {"affix": "micro-", "mean": "small", "ex": "microscope"}, {"affix": "super-", "mean": "above / better than", "ex": "superstar"}, {"affix": "trans-", "mean": "across", "ex": "transport"}, {"affix": "mid-", "mean": "middle", "ex": "midnight"}, {"affix": "fore-", "mean": "before", "ex": "forecast"}, {"affix": "anti-", "mean": "against", "ex": "antivirus"}], "suffixes": [{"affix": "-ful", "mean": "full of", "ex": "beautiful"}, {"affix": "-less", "mean": "without", "ex": "careless"}, {"affix": "-ness", "mean": "state of being", "ex": "kindness"}, {"affix": "-ly", "mean": "in a certain way", "ex": "quickly"}, {"affix": "-able", "mean": "able to be", "ex": "readable"}, {"affix": "-er", "mean": "person who", "ex": "teacher"}, {"affix": "-ment", "mean": "action or result", "ex": "enjoyment"}, {"affix": "-tion", "mean": "action or state", "ex": "education"}, {"affix": "-ish", "mean": "somewhat like", "ex": "childish"}, {"affix": "-ward", "mean": "in the direction of", "ex": "forward"}, {"affix": "-ify", "mean": "make or become", "ex": "simplify"}, {"affix": "-let", "mean": "small", "ex": "booklet"}, {"affix": "-ling", "mean": "young or small", "ex": "duckling"}, {"affix": "-ous", "mean": "full of", "ex": "dangerous"}, {"affix": "-ship", "mean": "state or skill", "ex": "friendship"}], "compounds": [{"word": "notebook", "parts": "note + book", "kind": "closed"}, {"word": "toothbrush", "parts": "tooth + brush", "kind": "closed"}, {"word": "rainbow", "parts": "rain + bow", "kind": "closed"}, {"word": "sunflower", "parts": "sun + flower", "kind": "closed"}, {"word": "football", "parts": "foot + ball", "kind": "closed"}, {"word": "butterfly", "parts": "butter + fly", "kind": "closed"}, {"word": "bedroom", "parts": "bed + room", "kind": "closed"}, {"word": "homework", "parts": "home + work", "kind": "closed"}, {"word": "breakfast", "parts": "break + fast", "kind": "closed"}, {"word": "playground", "parts": "play + ground", "kind": "closed"}, {"word": "ice cream", "parts": "ice + cream", "kind": "open"}, {"word": "post office", "parts": "post + office", "kind": "open"}, {"word": "living room", "parts": "living + room", "kind": "open"}, {"word": "bus stop", "parts": "bus + stop", "kind": "open"}, {"word": "swimming pool", "parts": "swimming + pool", "kind": "open"}, {"word": "pencil case", "parts": "pencil + case", "kind": "open"}, {"word": "water bottle", "parts": "water + bottle", "kind": "open"}, {"word": "mother-in-law", "parts": "mother + in + law", "kind": "hyphenated"}, {"word": "well-known", "parts": "well + known", "kind": "hyphenated"}, {"word": "six-year-old", "parts": "six + year + old", "kind": "hyphenated"}, {"word": "part-time", "parts": "part + time", "kind": "hyphenated"}, {"word": "merry-go-round", "parts": "merry + go + round", "kind": "hyphenated"}, {"word": "hard-working", "parts": "hard + working", "kind": "hyphenated"}, {"word": "lunch box", "parts": "lunch + box", "kind": "open"}, {"word": "school uniform", "parts": "school + uniform", "kind": "open"}], "connectors": [{"word": "and", "mean": "adds a similar idea", "group": "Adding"}, {"word": "moreover", "mean": "adds a stronger point", "group": "Adding"}, {"word": "furthermore", "mean": "adds more information", "group": "Adding"}, {"word": "in addition", "mean": "adds another idea", "group": "Adding"}, {"word": "but", "mean": "shows a difference", "group": "Contrast"}, {"word": "however", "mean": "shows contrast, more formal", "group": "Contrast"}, {"word": "although", "mean": "shows contrast", "group": "Contrast"}, {"word": "even though", "mean": "stronger form of although", "group": "Contrast"}, {"word": "on the other hand", "mean": "shows the opposite view", "group": "Contrast"}, {"word": "because", "mean": "shows a reason", "group": "Cause"}, {"word": "so", "mean": "shows a result", "group": "Cause"}, {"word": "therefore", "mean": "shows a conclusion", "group": "Cause"}, {"word": "as a result", "mean": "shows a consequence", "group": "Cause"}, {"word": "due to", "mean": "because of", "group": "Cause"}, {"word": "first", "mean": "shows the first step", "group": "Sequence"}, {"word": "next", "mean": "shows what comes after", "group": "Sequence"}, {"word": "then", "mean": "shows what happens after", "group": "Sequence"}, {"word": "finally", "mean": "shows the last point", "group": "Sequence"}, {"word": "eventually", "mean": "after a long time", "group": "Sequence"}, {"word": "for example", "mean": "gives an example", "group": "Example"}, {"word": "such as", "mean": "gives examples", "group": "Example"}, {"word": "similarly", "mean": "in a similar way", "group": "Similarity"}, {"word": "in conclusion", "mean": "to conclude", "group": "Concluding"}, {"word": "to sum up", "mean": "to summarise", "group": "Concluding"}, {"word": "all in all", "mean": "considering everything", "group": "Concluding"}]};
+const META = {"verbs": {"title": "Verb Forms", "emoji": "✏️", "blurb": "Past, he/she/it, and -ing"}, "collectives": {"title": "Collective Nouns", "emoji": "🦁", "blurb": "A pride of lions"}, "comparatives": {"title": "Comparatives", "emoji": "📏", "blurb": "bigger, happiest, best"}, "idioms": {"title": "Idioms", "emoji": "💭", "blurb": "on cloud nine"}, "phrasals": {"title": "Phrasal Verbs", "emoji": "🚌", "blurb": "get on, look after"}, "similes": {"title": "Similes", "emoji": "⚡", "blurb": "as brave as a lion"}, "show": {"title": "Show, Don’t Tell", "emoji": "🌟", "blurb": "Show the feeling"}, "affixes": {"title": "Prefixes & Suffixes", "emoji": "🧩", "blurb": "un-, re-, -ful, -ly"}, "compounds": {"title": "Compound Words", "emoji": "🌈", "blurb": "rain + bow = rainbow"}, "connectors": {"title": "Connectors", "emoji": "🔗", "blurb": "because, however, finally"}};
+let TOPIC = "verbs";
+
+function shuffle(arr){const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+function pickN(arr,n){return shuffle(arr).slice(0,n);}
+function optionsFrom(correct,pool,n=4){
+  const others=shuffle(pool.filter(x=>x && x.toLowerCase()!==correct.toLowerCase()));
+  const opts=[correct];
+  for(const o of others){ if(opts.length>=n) break; if(!opts.some(x=>x.toLowerCase()===o.toLowerCase())) opts.push(o); }
+  return shuffle(opts);
+}
+function buildQuestion(topic, mode){
+  if(topic==="verbs"){
+    const v=DATA.verbs[Math.floor(Math.random()*DATA.verbs.length)];
+    const kind=mode==="mix"?["past","third","ing"][Math.floor(Math.random()*3)]:mode;
+    const label={past:"past tense", third:"he/she/it form", ing:"-ing form"}[kind];
+    const correct=v[kind];
+    return {prompt:`What is the ${label} of “${v.base}”?`, hint:`The doing word is ${v.base}.`, correct, accept:v.base==="learn"&&kind==="past"?["learnt","learned"]:[correct], options:optionsFrom(correct, DATA.verbs.map(x=>x[kind])), explain:`${v.base} → ${v.past} → ${v.third} → ${v.ing}`};
+  }
+  if(topic==="collectives"){
+    const c=DATA.collectives[Math.floor(Math.random()*DATA.collectives.length)];
+    return {prompt:`A ____ of ${c.of}`, hint:"Which group word fits?", correct:c.word, accept:[c.word], options:optionsFrom(c.word, DATA.collectives.map(x=>x.word)), explain:`a ${c.word} of ${c.of}`};
+  }
+  if(topic==="comparatives"){
+    const c=DATA.comparatives[Math.floor(Math.random()*DATA.comparatives.length)];
+    const kind=mode==="mix"?(Math.random()<.5?"comp":"sup"):mode;
+    const correct=c[kind];
+    const label=kind==="comp"?"comparative":"superlative";
+    return {prompt:`What is the ${label} of “${c.pos}”?`, hint:kind==="comp"?"Two things.":"Three or more.", correct, accept:[correct], options:optionsFrom(correct, DATA.comparatives.map(x=>x[kind])), explain:`${c.pos} → ${c.comp} → ${c.sup}`};
+  }
+  if(topic==="idioms"||topic==="phrasals"||topic==="similes"){
+    const bank=DATA[topic];
+    const item=bank[Math.floor(Math.random()*bank.length)];
+    if(Math.random()<.55) return {prompt:item.item, hint:"What does this mean?", correct:item.mean, accept:[item.mean], options:optionsFrom(item.mean, bank.map(x=>x.mean)), explain:`${item.item} = ${item.mean}`};
+    return {prompt:`Which one means “${item.mean}”?`, hint:"Pick the expression.", correct:item.item, accept:[item.item], options:optionsFrom(item.item, bank.map(x=>x.item)), explain:`${item.item} = ${item.mean}`};
+  }
+  if(topic==="show"){
+    const item=DATA.show[Math.floor(Math.random()*DATA.show.length)];
+    const other=DATA.show.filter(x=>x.feel!==item.feel);
+    return {prompt:`Which sentence shows this?\n“${item.tell}”`, hint:`Feeling: ${item.feel}`, correct:item.show, accept:[item.show], options:shuffle([item.show, ...pickN(other,3).map(x=>x.show)]), explain:item.show};
+  }
+  if(topic==="affixes"){
+    const usePre=Math.random()<.5;
+    const bank=usePre?DATA.prefixes:DATA.suffixes;
+    const item=bank[Math.floor(Math.random()*bank.length)];
+    const kind=usePre?"prefix":"suffix";
+    if(Math.random()<.5) return {prompt:`What does “${item.affix}” mean?`, hint:`Example: ${item.ex}`, correct:item.mean, accept:[item.mean], options:optionsFrom(item.mean, bank.map(x=>x.mean)), explain:`${item.affix} means ${item.mean}, as in ${item.ex}`};
+    return {prompt:`Which ${kind} means “${item.mean}”?`, hint:`Example: ${item.ex}`, correct:item.affix, accept:[item.affix], options:optionsFrom(item.affix, bank.map(x=>x.affix)), explain:`${item.affix} means ${item.mean}, as in ${item.ex}`};
+  }
+  if(topic==="compounds"){
+    const item=DATA.compounds[Math.floor(Math.random()*DATA.compounds.length)];
+    if(Math.random()<.5) return {prompt:`“${item.word}” is made from…`, hint:"Pick the parts.", correct:item.parts, accept:[item.parts], options:optionsFrom(item.parts, DATA.compounds.map(x=>x.parts)), explain:`${item.word} = ${item.parts} (${item.kind})`};
+    return {prompt:`How is “${item.word}” written?`, hint:"One word, two words, or a hyphen.", correct:item.kind, accept:[item.kind], options:shuffle(["closed","open","hyphenated"]), explain:`${item.word} is ${item.kind} (${item.parts}).`};
+  }
+  const item=DATA.connectors[Math.floor(Math.random()*DATA.connectors.length)];
+  if(Math.random()<.5) return {prompt:`What does “${item.word}” do?`, hint:`Group: ${item.group}`, correct:item.mean, accept:[item.mean], options:optionsFrom(item.mean, DATA.connectors.map(x=>x.mean)), explain:`${item.word}: ${item.mean}`};
+  return {prompt:`Which connector ${item.mean}?`, hint:`${item.group} group`, correct:item.word, accept:[item.word], options:optionsFrom(item.word, DATA.connectors.map(x=>x.word)), explain:`${item.word}: ${item.mean}`};
+}
+function uniqueQuestions(topic, mode, n){
+  const seen=new Set(), out=[]; let guard=0;
+  while(out.length<n && guard<80){ guard++; const q=buildQuestion(topic, mode); const key=q.prompt+"|"+q.correct; if(seen.has(key)) continue; seen.add(key); out.push(q); }
+  return out;
+}
+const MODES={
+  verbs:[{id:"past",label:"Past"},{id:"third",label:"He / she / it"},{id:"ing",label:"-ing"},{id:"mix",label:"Mix"}],
+  comparatives:[{id:"comp",label:"Comparative"},{id:"sup",label:"Superlative"},{id:"mix",label:"Mix"}]
+};
+let state=null;
+const play=document.getElementById("play"), done=document.getElementById("done");
+function stars(n){ return "⭐".repeat(n)+"☆".repeat(Math.max(0,10-n)); }
+function start(mode){
+  const modes=MODES[TOPIC];
+  mode=mode||(modes?modes[0].id:"mix");
+  state={mode, qs:uniqueQuestions(TOPIC, mode, 10), i:0, score:0, locked:false, missed:[]};
+  play.classList.remove("hidden"); done.classList.add("hidden");
+  const modesEl=document.getElementById("modes"); modesEl.innerHTML="";
+  if(modes){ modes.forEach(m=>{ const b=document.createElement("button"); b.textContent=m.label; if(m.id===mode) b.classList.add("on"); b.onclick=()=>start(m.id); modesEl.appendChild(b); }); }
+  showQ();
+}
+function showQ(){
+  const q=state.qs[state.i]; state.locked=false;
+  document.getElementById("qcount").textContent=`Question ${state.i+1} of ${state.qs.length}`;
+  document.getElementById("starline").textContent=stars(state.score);
+  document.getElementById("prog").style.width=`${(state.i/state.qs.length)*100}%`;
+  document.getElementById("prompt").textContent=q.prompt;
+  document.getElementById("hint").textContent=q.hint;
+  const fb=document.getElementById("fb"); fb.className="feedback"; fb.textContent="";
+  document.getElementById("nextBtn").disabled=true;
+  const box=document.getElementById("choices"); box.innerHTML="";
+  q.options.forEach((opt,idx)=>{ const b=document.createElement("button"); b.className="choice"; b.textContent=opt; b.onclick=()=>answer(opt,b); box.appendChild(b); });
+}
+function answer(opt,btn){
+  if(state.locked) return; state.locked=true;
+  const q=state.qs[state.i];
+  const ok=q.accept.some(a=>a.toLowerCase()===opt.toLowerCase());
+  document.querySelectorAll(".choice").forEach(b=>{ b.disabled=true; if(q.accept.some(a=>a.toLowerCase()===b.textContent.toLowerCase())) b.classList.add("good"); });
+  const fb=document.getElementById("fb");
+  if(ok){ state.score++; fb.className="feedback show ok"; fb.textContent=`Yes! ${q.explain}`; }
+  else { btn.classList.add("bad"); state.missed.push(q); fb.className="feedback show no"; fb.textContent=`Almost. The answer is ${q.correct}. ${q.explain}`; }
+  document.getElementById("starline").textContent=stars(state.score);
+  document.getElementById("nextBtn").disabled=false;
+  document.getElementById("nextBtn").textContent=state.i===state.qs.length-1?"See my stars":"Next";
+}
+function next(){ if(!state||!state.locked) return; if(state.i===state.qs.length-1) return finish(); state.i++; showQ(); }
+function finish(){
+  play.classList.add("hidden"); done.classList.remove("hidden");
+  document.getElementById("scorebig").textContent=`${state.score} / 10`;
+  document.getElementById("starend").textContent=stars(state.score);
+  const pct=state.score;
+  document.getElementById("scoreline").textContent = pct===10?"Wow, full stars!": pct>=7?"Great job. Look at the ones to practise.":"Good try. Play again and those words will stick.";
+  const missed=document.getElementById("missed");
+  missed.innerHTML = state.missed.length? "<strong>Practise these</strong><ul class='miss'>"+state.missed.map(q=>`<li>${q.prompt.replace(/\n/g," ")} — <b>${q.correct}</b></li>`).join("")+"</ul>" : "<p>No misses this round.</p>";
+}
+document.getElementById("nextBtn").onclick=next;
+document.getElementById("againBtn").onclick=()=>start(state.mode);
+document.addEventListener("keydown", e=>{
+  if(play.classList.contains("hidden")) return;
+  if(e.key>="1"&&e.key<="4"){ const b=document.querySelectorAll(".choice")[Number(e.key)-1]; if(b&&!b.disabled) b.click(); }
+  if(e.key==="Enter") next();
+});
+
+
+function showHome() {
+  document.getElementById("home").classList.remove("hidden");
+  document.getElementById("game").classList.add("hidden");
+}
+function showGame(id) {
+  if (!META[id]) return showHome();
+  TOPIC = id;
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("gameTitle").textContent = META[id].emoji + " " + META[id].title;
+  document.getElementById("gameBlurb").textContent = META[id].blurb;
+  start();
+  window.scrollTo(0,0);
+}
+function route() {
+  const id = (location.hash || "#home").slice(1);
+  if (!id || id === "home") showHome();
+  else showGame(id);
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body></html>
